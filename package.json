@@ -1,0 +1,39 @@
+{
+  "name": "starworld-mock-api",
+  "version": "0.0.1",
+  "description": "A server that responds with mock data.",
+  "scripts": {
+    "start": "./app/cli.js -p 3809",
+    "lint": "esw --watch --color ./app ./tests",
+    "test:integration:do-it": "jest ./tests/integration",
+    "test:integration": "export PORT=3809; ./app/cli.js -p $PORT -c $CLAIMS_NS & export CLI_PID=$!; ./tests/integration/wait-for-it.sh localhost:${PORT} --strict -- npm run test:integration:do-it; kill $CLI_PID"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cullylarson/starworld-mock-api.git"
+  },
+  "author": "Cully Larson <cully.larson@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cullylarson/starworld-mock-api/issues"
+  },
+  "homepage": "https://github.com/cullylarson/starworld-mock-api#readme",
+  "bin": {
+    "starworld-mock-api": "./app/cli.js"
+  },
+  "devDependencies": {
+    "eslint": "^7.17.0",
+    "eslint-plugin-jest": "^24.1.3",
+    "eslint-watch": "^7.0.0",
+    "jest": "^26.6.3",
+    "standard": "^16.0.3",
+    "supertest": "^6.0.1"
+  },
+  "dependencies": {
+    "@cullylarson/f": "^0.1.2",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "yargs": "^16.2.0"
+  }
+}
