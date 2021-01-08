@@ -1,11 +1,12 @@
 {
   "name": "starworld-mock-api",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A server that responds with mock data.",
+  "main": "src/",
   "scripts": {
     "start": "./app/cli.js -p 3809",
     "lint": "esw --watch --color ./app ./tests",
-    "test:run": "jest ./tests/integration",
+    "test:run": "jest ./tests",
     "test": "export PORT=3809; ./app/cli.js -p $PORT -c $CLAIMS_NS & export CLI_PID=$!; ./tests/integration/wait-for-it.sh localhost:${PORT} --strict -- npm run test:run; kill $CLI_PID"
   },
   "repository": {
@@ -34,6 +35,8 @@
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "node-fetch": "^2.6.1",
+    "url-join": "^4.0.1",
     "yargs": "^16.2.0"
   }
 }
