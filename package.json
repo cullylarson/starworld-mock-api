@@ -5,8 +5,8 @@
   "scripts": {
     "start": "./app/cli.js -p 3809",
     "lint": "esw --watch --color ./app ./tests",
-    "test:integration:do-it": "jest ./tests/integration",
-    "test:integration": "export PORT=3809; ./app/cli.js -p $PORT -c $CLAIMS_NS & export CLI_PID=$!; ./tests/integration/wait-for-it.sh localhost:${PORT} --strict -- npm run test:integration:do-it; kill $CLI_PID"
+    "test:run": "jest ./tests/integration",
+    "test": "export PORT=3809; ./app/cli.js -p $PORT -c $CLAIMS_NS & export CLI_PID=$!; ./tests/integration/wait-for-it.sh localhost:${PORT} --strict -- npm run test:run; kill $CLI_PID"
   },
   "repository": {
     "type": "git",

@@ -20,10 +20,10 @@ NOTE: If running on macos, you will need `coreutils` installed.
 brew install coreutils
 ```
 
-Run integration tests:
+Run tests:
 
 ```
-npm run test:integration
+npm run test
 ```
 
 ## Usage
