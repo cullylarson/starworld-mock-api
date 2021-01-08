@@ -236,3 +236,15 @@ test('URL parameters are ignored.', () => {
                 .expect(x => expect(x.body).toEqual({a: 'AAA'}))
         })
 })
+
+test('Providing no body to the endpoint causes the response body to be an empty string.', () => {
+    return registerEndpoint({
+        endpoint: '/test',
+    })
+        .expect(200)
+        .then(() => {
+            return request(baseUrl).get('/test')
+                .expect(200)
+                .expect(x => expect(x.body).toBe(''))
+        })
+})

@@ -4,10 +4,10 @@
   "description": "A server that responds with mock data.",
   "main": "src/",
   "scripts": {
-    "start": "./app/cli.js -p 3809",
+    "start": "./app/cli.js -p 3810",
     "lint": "esw --watch --color ./app ./tests",
     "test:run": "jest ./tests",
-    "test": "export PORT=3809; ./app/cli.js -p $PORT -c $CLAIMS_NS & export CLI_PID=$!; ./tests/integration/wait-for-it.sh localhost:${PORT} --strict -- npm run test:run; kill $CLI_PID",
+    "test": "export PORT=3810; ./app/cli.js -p $PORT -c $CLAIMS_NS & export CLI_PID=$!; ./tests/integration/wait-for-it.sh localhost:${PORT} --strict -- npm run test:run; kill $CLI_PID",
     "prepublish": "npm test"
   },
   "repository": {
