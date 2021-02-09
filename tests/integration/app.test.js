@@ -4,7 +4,7 @@ const {baseUrl, matchesField, registerEndpoint, clearEndpoints} = require('./uti
 
 afterEach(clearEndpoints)
 
-test('Can register a GET endpoint that returns JSON', () => {
+test('Can register a GET endpoint that returns JSON.', () => {
     return registerEndpoint({
         endpoint: '/test',
         body: {
@@ -21,7 +21,7 @@ test('Can register a GET endpoint that returns JSON', () => {
         })
 })
 
-test('Can register a POST endpoint that returns JSON', () => {
+test('Can register a POST endpoint that returns JSON.', () => {
     return registerEndpoint({
         endpoint: '/blah/another',
         method: 'POST',
@@ -246,5 +246,54 @@ test('Providing no body to the endpoint causes the response body to be an empty 
             return request(baseUrl).get('/test')
                 .expect(200)
                 .expect(x => expect(x.body).toBe(''))
+        })
+})
+
+test('Can register a GET endpoint with multiple responses.', () => {
+    return registerEndpoint({
+        endpoint: '/test',
+        responses: [
+            {
+                body: {a: 'AAA'},
+            },
+            {
+                status: 500,
+                body: {b: 'BBB'},
+                headers: {'my-test': 'is good'},
+            },
+            {
+                status: 201,
+                respondRaw: true,
+                body: 'the response',
+            },
+        ],
+    })
+        .expect(200)
+        .then(() => {
+            return request(baseUrl).get('/test')
+                .expect(200)
+                .expect(matchesField('a', 'AAA'))
+        })
+        .then(() => {
+            return request(baseUrl).get('/test')
+                .expect(500)
+                .expect(matchesField('b', 'BBB'))
+                .expect(x => expect(filter((_, key) => key === 'my-test', x.headers)).toEqual({'my-test': 'is good'}))
+        })
+        .then(() => {
+            return request(baseUrl).get('/test')
+                .expect(201)
+                .expect(x => expect(x.text).toBe('the response'))
+        })
+        // all other responses should be the same
+        .then(() => {
+            return request(baseUrl).get('/test')
+                .expect(201)
+                .expect(x => expect(x.text).toBe('the response'))
+        })
+        .then(() => {
+            return request(baseUrl).get('/test')
+                .expect(201)
+                .expect(x => expect(x.text).toBe('the response'))
         })
 })

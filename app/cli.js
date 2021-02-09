@@ -3,12 +3,40 @@
 const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
-const {getParams, toStr, toInt, toBool, identity} = require('@cullylarson/f')
+const {pick, getParams, toStr, toInt, toBool, identity} = require('@cullylarson/f')
 
 const isPlainObj = x => typeof x === 'object' && x.constructor === Object
 
-const getEndpointKey = (method, endpoint) => {
-    return method.toUpperCase() + '--' + endpoint.toLowerCase()
+const getEndpointKey = (method, endpointPath) => {
+    return method.toUpperCase() + '--' + endpointPath.toLowerCase()
+}
+
+const getResponseInfo = (endpoints, req) => {
+    const endpointKey = getEndpointKey(req.method, req.path)
+
+    const endpoint = endpoints[endpointKey]
+
+    if(!endpoint) {
+        return null
+    }
+
+    if(endpoint.responses && endpoint.responses.length) {
+        // if only one item left, just keep returning it as the response
+        if(endpoint.responses.length === 1) {
+            return endpoint.responses[0]
+        }
+        else {
+            return endpoint.responses.shift()
+        }
+    }
+    else {
+        return pick([
+            'status',
+            'headers',
+            'respondRaw',
+            'body',
+        ], endpoint)
+    }
 }
 
 let endpoints = {}
@@ -28,13 +56,22 @@ app.use(cors())
 app.use(bodyParser.json())
 
 app.post('/_starworld/register', (req, res) => {
-    const params = getParams({
-        endpoint: ['', toStr],
-        method: ['GET', toStr],
+    const responseInfoParamsDef = {
         status: toInt(200),
         headers: [{}, x => isPlainObj(x) ? x : {}],
         respondRaw: [false, toBool],
         body: ['', identity],
+    }
+
+    const params = getParams({
+        ...responseInfoParamsDef,
+        endpoint: ['', toStr],
+        method: ['GET', toStr],
+        responses: [[], xs => {
+            return Array.isArray(xs)
+                ? xs.map(getParams(responseInfoParamsDef))
+                : []
+        }],
     }, req.body)
 
     if(!params.endpoint) {
@@ -67,18 +104,18 @@ app.post('/_starworld/clear', (req, res) => {
 })
 
 app.all('*', (req, res) => {
-    const endpoint = endpoints[getEndpointKey(req.method, req.path)]
+    const responseInfo = getResponseInfo(endpoints, req)
 
-    if(!endpoint) return res.status(404).end()
+    if(!responseInfo) return res.status(404).end()
 
-    res.set(endpoint.headers)
-    res.status(endpoint.status)
+    res.set(responseInfo.headers)
+    res.status(responseInfo.status)
 
-    if(endpoint.respondRaw) {
-        return res.send(endpoint.body)
+    if(responseInfo.respondRaw) {
+        return res.send(responseInfo.body)
     }
     else {
-        return res.json(endpoint.body)
+        return res.json(responseInfo.body)
     }
 })
 

@@ -57,6 +57,7 @@ Parameters:
 - **headers** *(object, optional, default: `{'Content-type': 'application/json'}`)* Any response headers to send.
 - **respondRaw** *(boolean, optional, default: false)* By default, the response will be sent as JSON. Set this to `true` and the response body will be returned exactly as provided.
 - **body** *(any, required)* The response body. By default will send this as JSON string. See `respondRaw` to change this behavior.
+- **responses** *(array[object], optional)* Instead of sending `status`, `headers`, `responseRaw` and `body`, you can send an array of objects with those keys. Each subsequent call to the endpoint will respond with a value from that array. After the array is exhausted, all subsequent calls will response with the last value from the array.
 
 Result:
 
